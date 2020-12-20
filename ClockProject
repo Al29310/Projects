@@ -1,0 +1,238 @@
+#include <ctime>
+#include <iostream>
+#include <cstdlib>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
+using namespace std;
+void DisplayMenu()
+{
+    cout<<"**************************"<<endl;
+    cout<<"* 1--Add One hour        *"<<endl;
+    cout<<"* 2--Add One Minute      *"<<endl;
+    cout<<"* 3--Add One Second      *"<<endl;
+    cout<<"* 4--Exit Program        *"<<endl;
+    cout<<"**************************"<<endl;
+}
+
+//Method to display both times
+void Display12and24(int hours, int minutes, int seconds)
+{
+    int eaststndHours = hours;//This varible will be used to manipulate 
+    //The time variable so it can be used for the 12 hour clock
+    string AmPm;
+    //This if block allows for manipulation of the eaststndHours to fit the needs
+    //of the 12 hour clock
+    
+    //These 4 variables are made to take care of the situation when 
+    //Hours< 10, eaststndHours < 10, minutes < 10 and seconds <10
+    //Since we are asked to format the clocks in a certain way 
+    string stndHourXtra0;
+    string extraHour0;
+    string extraMinute0;
+    string extraSecond0;
+    
+    if(hours == 0)
+    
+    {
+        //If the user clicks on this method and the time happens to be 
+        //12am or 00 in millitary time. Then this method will adjust eaststndHours
+        
+        eaststndHours = 12;
+        AmPm = " A M";//It will be AM
+        
+    }
+    else if(hours < 12)
+    {   
+        //If it is morning time, for instance 1am in millitary time it will also be 
+        //1 am in standard time.The only tricky case is when hours == 00;
+        eaststndHours = hours;
+        AmPm = " A M";
+    }
+    else if(hours == 12)
+    //If it is 12 on the dot then it will be PM
+    {
+        eaststndHours = hours;
+        AmPm = "P M";
+    }
+    else if(hours > 12 && hours <= 23)
+    //If it in this range it is PM and it is possible to just subtract 12 from hours
+    //to get the valid standard time and it will obviously be in the PM
+    {
+        eaststndHours = hours - 12;
+        AmPm = " P M";
+    }
+    else
+    //if the case arrises that the user clicks addOneHour when hours is at 23 
+    //and we use the display method, this else statement will be used
+    {
+        hours = 0;
+        eaststndHours = 12;
+    }
+    //These if blocks asses if hours,eaststndHours,minutes,seconds < 10
+    //If they are there will be a "0" attached to any variable that triggers the 
+    //if statment
+    if(eaststndHours < 10)
+    {
+        stndHourXtra0 = "0";
+    }
+    else
+    {
+        stndHourXtra0 = "";
+    }
+    if(hours < 10)
+    {
+        extraHour0 = "0";
+    }
+    else
+    {
+        extraHour0 = "";
+    
+    }
+    if(minutes < 10)
+    {
+        extraMinute0 = "0";
+    }
+    else
+    {
+        extraMinute0 = "";
+    }
+    if(seconds < 10)
+    {
+        extraSecond0 = "0";
+    }
+    else
+    {
+        extraSecond0 = "";
+    }
+    //This clock was made using a series of if statments 
+    cout<<"**************************"<<"\t\t"<<"*************************"<<endl;
+    cout<<"*     12--Hour Clock     *"<<"\t\t"<<"*     24--Hour Clock    *"<<endl;
+    cout<<"*\t"<<stndHourXtra0<<eaststndHours<<":"<<extraMinute0<<minutes<<":"
+    <<extraSecond0<<seconds<<AmPm<<"\t "<<"*\t\t*\t"<<extraHour0<<hours
+    <<":"<<extraMinute0<<minutes<<":"<<extraSecond0<<seconds<<"\t*"<<endl;
+    cout<<"**************************"<<"\t\t"<<"*************************"<<endl;
+}
+//This method increases hour by 1 and then uses the Display12and24 method
+//inside the Display12and24 method there are many if-else blocks that make sure
+//That when hours is increased by 1 everything runs smoothly
+int addOneHour(int hours, int minutes, int seconds)
+{
+    hours = hours + 1;
+    system("CLS");
+    Display12and24(hours,minutes,seconds);
+}
+//The AddOneMinute method first checks if minutes = 59
+//if it is we call the addOneHour method
+//if not we proceed,add a minute, and Display both clocks 
+int addOneMinute(int hours, int minutes, int seconds)
+{
+    if(minutes == 59)
+    {
+        minutes = 0;
+        addOneHour(hours,minutes,seconds);
+    
+    }
+    
+    
+    else
+    {
+        minutes = minutes + 1;
+        system("CLS");
+        Display12and24(hours,minutes,seconds);
+    }
+}
+
+//The addOneSecond method is very similar to the addOneMinute method
+//but it does not call addOneHour instead it calls addOneMinute if seconds
+//happens to equal 59 when the user wants to use this Method
+//else it adds a seconds and displays both clocks
+int addOneSecond(int hours, int minutes, int seconds)
+{
+    if(seconds == 59)
+    {
+        seconds = 0;
+        addOneMinute(hours,seconds,minutes);
+    }
+    else
+    {
+        seconds = seconds + 1;
+        system("CLS");
+        Display12and24(hours, seconds, minutes);
+    }
+}
+
+int main()
+{
+   //This code allows for access of the current time
+   //Professor F helped out with some resources that allow us to 
+   //use find the time within C++
+    int seconds, minutes, hours;
+    string str;
+  
+    //storing total seconds
+    time_t total_seconds=time(0);
+  
+    //getting values of seconds, minutes and hours
+    struct tm* ct=localtime(&total_seconds);
+    
+  
+    seconds=ct->tm_sec;
+    minutes=ct->tm_min;
+    hours=ct->tm_hour;
+    bool leave = false;
+    //Main while loop
+    //contains switch block to take in user input and 
+    //make a descion based on what it is
+    //first the program will ask the user to press a button(chracter)
+    //if somthing is pressed the while loop will initiate
+    string button;
+    cout<<"Press any character to continue"<<endl;
+    cin>>button;
+    if(button.length()>0)
+        {
+        while(leave != true)
+            {
+               int selection;
+        
+            
+                DisplayMenu();
+                cout<<"Pick a choice.."<<endl;
+                cin>>selection;
+                switch (selection) 
+                {
+                    case(1):
+                        addOneHour(hours,minutes,seconds);
+                        hours = hours + 1;
+                        break;
+                    case(2):
+                        addOneMinute(hours,minutes,seconds);
+                        minutes = minutes + 1;
+                        break;
+                    case(3):
+                        addOneSecond(hours,minutes,seconds);
+                        seconds = seconds + 1;
+                        break;
+                    case(4):
+                        cout<<"Now exiting program"<<endl;
+                        leave = true;
+                        break;
+                    default:
+                        cout<<"invalid input please try again";
+                        leave = true;
+                        break;
+                    
+                }        
+            
+            }
+        }
+        else
+        {
+            addOneSecond(hours,minutes,seconds);
+            sleep(1);
+            Display12and24(hours,minutes,seconds);
+        }
+    }
